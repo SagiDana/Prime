@@ -76,3 +76,8 @@ DbgPrintEx( DPFLTR_IHVDRIVER_ID,
             0,                             
             "Hello World\n");             
 ```
+
+
+# Driver usage:
+Look at the `primer/primer.c` file to see an usage example.
+
