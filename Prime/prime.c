@@ -3,6 +3,14 @@
 
 #include "prime.h"
 
+#define LOG(...) do {                           \
+    char buff[1024*8];                          \
+    sprintf(buff, __VA_ARGS__);                 \
+    DbgPrintEx( DPFLTR_IHVDRIVER_ID,            \
+                0,                              \
+                buff);                          \
+}while(0)
+
 DRIVER_INITIALIZE DriverEntry;
 
 // Handles a IRP request.
@@ -19,23 +27,24 @@ DriverDispatch(
 
     PIO_STACK_LOCATION irpStack = IoGetCurrentIrpStackLocation(Irp);
 
+    // LOG("Prime: DriverDispatch()\n");
+
     if (irpStack->MajorFunction != IRP_MJ_DEVICE_CONTROL) goto end;
 
-    // PVOID ioBuffer = Irp->AssociatedIrp.SystemBuffer;
-	// ULONG inputLength = irpStack->Parameters.DeviceIoControl.InputBufferLength;
     ULONG ioControlCode = irpStack->Parameters.DeviceIoControl.IoControlCode;
-
     // COMMANDS:
-    switch (ioControlCode){
-        case (PRIME_IOCTL_MEMCPY):
-            break;
-        default:
-            break;
+    if (ioControlCode == PRIME_IOCTL_MEMCPY){
+        // LOG("Prime: PRIME_IOCTL_MEMCPY\n");
+
+        // unsigned char* buffer = Irp->AssociatedIrp.SystemBuffer;
+        // ULONG buffer_length = irpStack->Parameters.DeviceIoControl.InputBufferLength;
+        // unsigned int i;
+        // for (i = 0; i < buffer_length; i++){
+            // buffer[i] = 0x11;
+        // }
     }
 
-
 end:
-
     status = Irp->IoStatus.Status;
     IoCompleteRequest(Irp, IO_NO_INCREMENT);
 
@@ -49,6 +58,8 @@ DriverUnload(
 {	
     UNICODE_STRING dosDeviceName;
 	RtlUnicodeStringInit(&dosDeviceName, L"\\DosDevices\\PrimeDriver");
+
+    LOG("Prime: DriverUnload()\n");
 
 	IoDeleteSymbolicLink(&dosDeviceName);
 	IoDeleteDevice(DriverObject->DeviceObject);
@@ -66,11 +77,13 @@ DriverEntry(
 	UNICODE_STRING deviceName;
 	RtlUnicodeStringInit(&deviceName, L"\\Device\\PrimeDriver");
 
+    LOG("Prime: DriverEntry()\n");
+
 	PDEVICE_OBJECT deviceObject = NULL;
 	status = IoCreateDevice(DriverObject, 
                             0, 
                             &deviceName, 
-                            FILE_DEVICE_UNKNOWN, 
+                            0x22, 
                             0, 
                             FALSE, 
                             &deviceObject);
@@ -92,7 +105,6 @@ DriverEntry(
 	if (!NT_SUCCESS(status)) {
 		IoDeleteDevice(deviceObject);
 	}
-
 
     return status;
 }
