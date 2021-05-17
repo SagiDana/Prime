@@ -1,0 +1,23 @@
+﻿  Building 'Prime' with toolset 'WindowsKernelModeDriver10.0' and the 'Universal' target platform.
+  Stamping x64\Debug\Prime.inf
+  Stamping [Version] section with DriverVer=05/16/2021,18.16.29.610
+  Driver.c
+  Prime.vcxproj -> C:\Users\s\source\repos\Prime\x64\Debug\Prime.sys
+  Done Adding Additional Store
+  Successfully signed: C:\Users\s\source\repos\Prime\x64\Debug\Prime.sys
+  
+  Driver is 'Universal'.
+  .........................
+  Signability test complete.
+  
+  Errors:
+  None
+  
+  Warnings:
+  None
+  
+  Catalog generation complete.
+  C:\Users\s\source\repos\Prime\x64\Debug\Prime\prime.cat
+  Done Adding Additional Store
+  Successfully signed: C:\Users\s\source\repos\Prime\x64\Debug\Prime\prime.cat
+  

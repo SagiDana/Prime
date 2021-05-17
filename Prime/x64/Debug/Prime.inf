@@ -1,0 +1,90 @@
+;
+; Prime.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample ; TODO: edit Class
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171} ; TODO: edit ClassGuid
+Provider=%ManufacturerName%
+CatalogFile=Prime.cat
+DriverVer = 05/16/2021,18.16.29.610
+PnpLockDown=1
+
+[DestinationDirs]
+DefaultDestDir = 12
+Prime_Device_CoInstaller_CopyFiles = 11
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+Prime.sys  = 1,,
+;
+
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NTamd64
+
+[Standard.NTamd64]
+%Prime.DeviceDesc%=Prime_Device, Root\Prime ; TODO: edit hw-id
+
+[Prime_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+Prime.sys
+
+;-------------- Service installation
+[Prime_Device.NT.Services]
+AddService = Prime,%SPSVCINST_ASSOCSERVICE%, Prime_Service_Inst
+
+; -------------- Prime driver install sections
+[Prime_Service_Inst]
+DisplayName    = %Prime.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\Prime.sys
+
+;
+;--- Prime_Device Coinstaller installation ------
+;
+
+[Prime_Device.NT.CoInstallers]
+AddReg=Prime_Device_CoInstaller_AddReg
+CopyFiles=Prime_Device_CoInstaller_CopyFiles
+
+[Prime_Device_CoInstaller_AddReg]
+;
+
+
+[Prime_Device_CoInstaller_CopyFiles]
+;
+
+
+[Prime_Device.NT.Wdf]
+KmdfService =  Prime, Prime_wdfsect
+[Prime_wdfsect]
+KmdfLibraryVersion = 1.15
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+ClassName="Samples" ; TODO: edit ClassName
+DiskName = "Prime Installation Disk"
+Prime.DeviceDesc = "Prime Device"
+Prime.SVCDESC = "Prime Service"
