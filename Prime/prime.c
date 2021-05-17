@@ -13,7 +13,23 @@
 
 DRIVER_INITIALIZE DriverEntry;
 
-// Handles a IRP request.
+typedef struct{
+    unsigned char pad_1[0x20];
+    void* LdtDescriptor;
+}kprocess_t;
+
+void read_memory(int process_id)
+{
+    NTSTATUS status = STATUS_SUCCESS;
+    void* ldt_descriptor;
+    PEPROCESS process;
+
+	status = PsLookupProcessByProcessId((HANDLE)process_id, &process);
+    if (!NT_SUCCESS(status)) return;
+
+    ldt_descriptor = ((kprocess_t*)process)->LdtDescriptor;
+}
+
 NTSTATUS 
 DriverDispatch(
     _In_ PDEVICE_OBJECT DeviceObject, 
