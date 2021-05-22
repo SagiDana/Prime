@@ -14,6 +14,14 @@
 
 #define PRIME_IOCTL_MEMCPY ((ULONG)CTL_CODE(0x22, 0x808, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS))
 
+typedef struct {
+    int action;
+    int process_id;
+    void* source;
+    void* target;
+    unsigned int size;
+} memcpy_t;
+
 int main()
 {
     HANDLE driver;
@@ -30,12 +38,23 @@ int main()
         return -1;
     }
 
-    unsigned char buf[10] = {0};
+    int source_process_id = 5308;
+    void* source = 0x9000;
+
+    int target = 0xdead;
+    printf("before: %d\n", target);
+
+    memcpy_t buf = {
+        .process_id = source_process_id,
+        .source = source,
+        .target = &target,
+    };
+
     if (!DeviceIoControl(   driver, 
                             PRIME_IOCTL_MEMCPY,
-                            buf, 
+                            &buf, 
                             sizeof(buf), 
-                            buf, 
+                            &buf, 
                             sizeof(buf),
                             0, 
                             0)){
@@ -43,11 +62,8 @@ int main()
         printf("GetLastError: %d\n", GetLastError());
         return -1;
     }
-
-    int i;
-    for (i = 0; i < sizeof(buf); i++){
-        printf("%d\n", buf[i]);
-    }
+    printf("after: %d\n", target);
+    printf("after: %d\n", *((int*)source));
 
     return 0;
 }
